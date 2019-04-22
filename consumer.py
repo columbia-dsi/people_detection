@@ -38,3 +38,4 @@ if __name__ == "__main__":
 
 # To dos:
 # Dockerize the application
+# Improve the consumer - currently it is a simple consumer

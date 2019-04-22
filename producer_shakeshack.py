@@ -16,7 +16,14 @@ FREQUENCY_SECONDS = 60
 
 def get_image():
     # timenow_et = datetime.datetime.now(pytz.timezone('America/New_York')).strftime('%Y-%m-%d-%H-%M-%S')
-    response = requests.get('http://cdn.shakeshack.com/camera.jpg')
+    retries = 10
+    success = False
+    while retries > 0 and success is False:
+        response = requests.get('http://cdn.shakeshack.com/camera.jpg')
+        if len(response.content) > 0:
+            success = True
+        retries -= 1
+    print('Retries:', 9 - retries)
     return response
 
 
@@ -42,7 +49,7 @@ def produce(topic, serialized_obj):
 
 def pub_message(client, topic):
     response = get_image()
-    if response.status_code == 200:
+    if response.status_code == 200 and len(response.content) > 0:
         req_time = response.headers['date'].replace(
             ' ', '-').replace(':', '-').replace(',', '')
         msg = {
@@ -65,4 +72,3 @@ if __name__ == "__main__":
 # To dos:
 # Dockerize the application
 # Add sys argv to enable changing the image request frequency
-# Add retry logic for get request error
