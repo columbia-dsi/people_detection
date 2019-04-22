@@ -38,5 +38,3 @@ if __name__ == "__main__":
 
 # To dos:
 # Dockerize the application
-# Add sys argv to enable changing the image request frequency
-# Add retry logic for get request error
