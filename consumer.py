@@ -28,7 +28,7 @@ def model(msg):
 
 
 if __name__ == "__main__":
-    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
+    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test_2')
     consumer = topic.get_simple_consumer()
     for msg in consumer:
         if msg is not None:
@@ -38,3 +38,4 @@ if __name__ == "__main__":
 
 # To dos:
 # Dockerize the application
+# Improve the consumer - currently it is a simple consumer
