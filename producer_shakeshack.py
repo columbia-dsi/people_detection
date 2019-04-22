@@ -63,7 +63,7 @@ def pub_message(client, topic):
 
 
 if __name__ == "__main__":
-    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test_2')
+    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
     print(client, topic)
     pub_message_args = partial(pub_message, client, topic)
     PeriodicCallback(pub_message_args, FREQUENCY_SECONDS * 1000).start()
