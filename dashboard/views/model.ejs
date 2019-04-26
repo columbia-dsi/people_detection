@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/css/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+
+
+    <hr>
+
+
+    <p>1) Test Image</p>
+    <form action="/model/post/img" method="post">
+      <input name="pic" type="file" accept="image/*">
+      <input type="submit">
+    </form>
+    
+    <br>
+    <hr>
+
+    <p>2) Test URL</p>
+    <form action="/model/post/url">
+      <input name="url" type='text' style='width: 248px;'></input>
+      <input type="submit">
+    </form>
+
+  </body>
+</html>
