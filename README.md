@@ -33,14 +33,15 @@ Finally, CTRL+C in the terminal window in which you have kafka up to kill it.
 ## Dashboard
 
 
-```change directory:
+```
+change directory:
      > cd dashboard
 
-```install dependencies:
+install dependencies:
      > npm install
 
-```run the app:
+run the app:
      > SET DEBUG=dashboard:* & npm start
-
+```
 
 ## Pipeline
