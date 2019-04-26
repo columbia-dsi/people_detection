@@ -28,3 +28,19 @@ We're ready to use pykafka to produce and consume from our topic. Once ready to 
 zkServer stop
 ```
 Finally, CTRL+C in the terminal window in which you have kafka up to kill it. 
+
+
+## Dashboard
+
+
+```change directory:
+     > cd dashboard
+
+```install dependencies:
+     > npm install
+
+```run the app:
+     > SET DEBUG=dashboard:* & npm start
+
+
+## Pipeline
