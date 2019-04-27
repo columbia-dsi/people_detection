@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
- var request = require('request');
+var request = require('request');
+var config = require('../config.json');
 
 
 /* GET home page. */
@@ -22,23 +23,23 @@ router.get('/model', function(req, res, next) {
 
 router.post('/model/post/image', function(req, res, next) {
   //call the custom vision model
+  console.log('body:', JSON.stringify(req.body.pic));
   request({
-        host: 'https://southcentralus.api.cognitive.microsoft.com',
-        path: '/customvision/v3.0/Prediction/eff56ac8-0f36-41d9-93a9-da19396b0f30/detect/iterations/Iteration2_ppl_focus/image',
+        uri: config.model.api.prediction.image.uri,
         method: 'POST',
         headers: {
-            'Prediction-Key': '5e0cd4f967c142ca90153bc8e3b6773e',
+            'Prediction-Key': config.model.api.prediction.image.key,
             'Content-Type': 'application/octet-stream'
         },
         body: req.body.pic
       },
       function (error, response, body) {
           if (!error && response.statusCode == 200) {
-              console.log(body);
               res.render('model', { title: 'Model', content: body});
           }
           else{
-             console.log(error);
+             console.log('error:',error);
+             console.log('body:', body);
           }
       });
 
@@ -47,24 +48,25 @@ router.post('/model/post/image', function(req, res, next) {
 
 router.post('/model/post/url', function(req, res, next) {
   request({
-        host: 'https://southcentralus.api.cognitive.microsoft.com',
-        path: '/customvision/v3.0/Prediction/eff56ac8-0f36-41d9-93a9-da19396b0f30/detect/iterations/Iteration2_ppl_focus/image',
+        uri: config.model.api.prediction.url.uri,
         method: 'POST',
         headers: {
-            'Prediction-Key': '5e0cd4f967c142ca90153bc8e3b6773e',
+            'Prediction-Key': config.model.api.prediction.url.key,
             'Content-Type': 'application/json'
         },
+        json: true,
         body: { 
           'Url': req.body.url
         }
       },
       function (error, response, body) {
           if (!error && response.statusCode == 200) {
-              console.log(body);
-              res.render('model', { title: 'Model', content: body});
+             //console.log('body:', JSON.stringify(body));
+             res.render('model', { title: 'Model', content: body});
           }
           else{
-             console.log(error);
+             console.log('error:',error);
+             console.log('body:', body);
           }
       });
 });
