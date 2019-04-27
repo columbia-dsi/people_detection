@@ -82,12 +82,24 @@ router.post('/model/post/url', function(req, res, next) {
 
 
 
+function createGround(width, height){
+    var result = [];
+    for (var i = 0 ; i < width; i++) {
+        result[i] = [];
+        for (var j = 0; j < height; j++) {
+            result[i][j] = Math.random(); //initialize with randomly probability [0-1]
+            //Math.round(Math.random()); //initialize randomly 0,1
+        }
+    }
+    return result;
+}
+
 
 router.get('/map', function(req, res, next) {
   //Integration: Convert the model API result -> seat map
   
   //Pick the first image (Or overwritten by Kafka publishing)
-  const folder = './public/test/';
+  const folder = './public/test';
 
   fs.readdir(folder, function(err, items) {
     var path = folder + '/' + items[0];
@@ -106,7 +118,13 @@ router.get('/map', function(req, res, next) {
     },
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            res.render('map', { title: 'Map', content: body});
+            // set a seats map with (col, row)
+            var ground = createGround(10, 10);
+            // filter by ppl detection result from model api
+   
+            // TODO Server side logic: ground = ground - bodyArray
+
+            res.render('map', { title: 'Map', content: ground});
         }
         else{
             console.log('error:',error);
