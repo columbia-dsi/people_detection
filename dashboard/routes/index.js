@@ -81,4 +81,43 @@ router.post('/model/post/url', function(req, res, next) {
 });
 
 
+
+
+router.get('/map', function(req, res, next) {
+  //Integration: Convert the model API result -> seat map
+  
+  //Pick the first image (Or overwritten by Kafka publishing)
+  const folder = './public/test/';
+
+  fs.readdir(folder, function(err, items) {
+    var path = folder + '/' + items[0];
+    console.log("Find: " + path);
+
+    const imagePath = getAbsolutePath(path);
+    var raw = fs.createReadStream(imagePath);
+    request({
+      uri: config.model.api.prediction.image.uri,
+      method: 'POST',
+      headers: {
+          'Prediction-Key': config.model.api.prediction.image.key,
+          'Content-Type': 'application/octet-stream'
+      },
+      body: raw
+    },
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            res.render('map', { title: 'Map', content: body});
+        }
+        else{
+            console.log('error:',error);
+            console.log('body:', body);
+        }
+    });
+
+  });
+
+
+});
+
+
 module.exports = router;
