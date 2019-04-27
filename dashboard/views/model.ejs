@@ -9,11 +9,11 @@
     <p>Welcome to <%= title %></p>
 
 
-    <hr>
+
 
 
     <p>1) Test Image</p>
-    <form action="/model/post/img" method="post">
+    <form action="/model/post/image" method="post" enctype="multipart/form-data">
       <input name="pic" type="file" accept="image/*">
       <input type="submit">
     </form>
@@ -22,10 +22,17 @@
     <hr>
 
     <p>2) Test URL</p>
-    <form action="/model/post/url">
+    <form action="/model/post/url" method="post">
       <input name="url" type='text' style='width: 248px;'></input>
       <input type="submit">
     </form>
 
+    <br>
+    <hr>
+     
+
+     <% if(locals.content) {%>
+      <p>Result: <%= JSON.stringify(content) %></p>
+    <% } %>
   </body>
 </html>
