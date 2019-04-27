@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var config = require('../config.json');
+var fs = require('fs');
+var getAbsolutePath = require('path').resolve;
 
 
 /* GET home page. */
@@ -23,7 +25,13 @@ router.get('/model', function(req, res, next) {
 
 router.post('/model/post/image', function(req, res, next) {
   //call the custom vision model
-  console.log('body:', JSON.stringify(req.body.pic));
+  //console.log('pic:', req.body.pic);
+  //TODO: Kafka -> Publish images under ./public/test/
+  //TODO: Kafka -> calling the model API
+  const path = './public/test/' + req.body.pic;
+  const imagePath = getAbsolutePath(path);
+  //console.log('imagePath:', imagePath);
+  var raw = fs.createReadStream(imagePath);
   request({
         uri: config.model.api.prediction.image.uri,
         method: 'POST',
@@ -31,7 +39,7 @@ router.post('/model/post/image', function(req, res, next) {
             'Prediction-Key': config.model.api.prediction.image.key,
             'Content-Type': 'application/octet-stream'
         },
-        body: req.body.pic
+        body: raw
       },
       function (error, response, body) {
           if (!error && response.statusCode == 200) {
@@ -47,6 +55,7 @@ router.post('/model/post/image', function(req, res, next) {
 
 
 router.post('/model/post/url', function(req, res, next) {
+  //call the custom vision model
   request({
         uri: config.model.api.prediction.url.uri,
         method: 'POST',
