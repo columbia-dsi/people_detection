@@ -26,7 +26,7 @@ def model(msg):
 
 if __name__ == "__main__":
     client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
-    consumer = topic.get_simple_consumer()
+    consumer = topic.get_simple_consumer(fetch_message_max_bytes=104857600)
     for msg in consumer:
         if msg is not None:
             msg = decode(msg.value)

@@ -19,7 +19,7 @@ def gen_client(hosts="127.0.0.1:9092", topic_name='test'):
 
 
 def produce(topic, serialized_obj):
-    with topic.get_sync_producer() as producer:
+    with topic.get_sync_producer(max_request_size=104857600) as producer:
         producer.produce(serialized_obj)
 
 
@@ -33,8 +33,9 @@ def image_producer_loop(client, topic):
 
     for image in itertools.cycle(images_sorted):
         img = cv2.imread('{}/{}'.format(IMAGE_DIR_PATH, image))
+        frame_num = int(image[6:image.find('.')])
         msg = {
-            'frame_num': image_sort[0],
+            'frame_num': frame_num,
             'img_arr': img
         }
         msg_pickle = pickle.dumps(msg)
@@ -49,8 +50,9 @@ def image_producer_random(client, topic):
     while True:
         frame = random.choice(images)
         img = cv2.imread('{}/{}'.format(IMAGE_DIR_PATH, frame))
+        frame_num = int(frame[6:frame.find('.')])
         msg = {
-            'frame_num': image_sort[0],
+            'frame_num': frame_num,
             'img_arr': img
         }
         msg_pickle = pickle.dumps(msg)
