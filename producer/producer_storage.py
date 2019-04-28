@@ -6,10 +6,19 @@ from pykafka.common import OffsetType
 import itertools
 import time
 import random
-
+import sys
 
 IMAGE_DIR_PATH = 'video_to_images'
 IMAGE_FREQUENCY = 5
+PRODUCER_TYPE = 'loop'
+
+arg_len = len(sys.argv)
+if arg_len > 1:
+    IMAGE_DIR_PATH = sys.argv[1]
+if arg_len > 2:
+    IMAGE_FREQUENCY = int(sys.argv[2])
+if arg_len > 3:
+    PRODUCER_TYPE = sys.argv[3]
 
 
 def gen_client(hosts="127.0.0.1:9092", topic_name='test'):
@@ -65,7 +74,10 @@ def image_producer_random(client, topic):
 if __name__ == "__main__":
     client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
     print(client, topic)
-    image_producer_loop(client, topic)
+    if PRODUCER_TYPE == 'loop':
+        image_producer_loop(client, topic)
+    else:
+        image_producer_random(client, topic)
 
 # To dos:
 # Dockerize the application
