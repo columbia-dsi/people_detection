@@ -21,7 +21,7 @@ if arg_len > 3:
     PRODUCER_TYPE = sys.argv[3]
 
 
-def gen_client(hosts="127.0.0.1:9092", topic_name='test'):
+def gen_client(hosts="127.0.0.1:9092", topic_name='people-detection'):
     client = KafkaClient(hosts=hosts)
     topic = client.topics[topic_name]
     return client, topic
@@ -72,7 +72,8 @@ def image_producer_random(client, topic):
 
 
 if __name__ == "__main__":
-    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
+    client, topic = gen_client(
+        hosts="127.0.0.1:9092", topic_name='people-detection')
     print(client, topic)
     if PRODUCER_TYPE == 'loop':
         image_producer_loop(client, topic)

@@ -7,7 +7,7 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 
 
-def gen_client(hosts="127.0.0.1:9092", topic_name='test'):
+def gen_client(hosts="127.0.0.1:9092", topic_name='people-detection'):
     client = KafkaClient(hosts=hosts)
     topic = client.topics[topic_name]
     return client, topic
@@ -25,7 +25,8 @@ def model(msg):
 
 
 if __name__ == "__main__":
-    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
+    client, topic = gen_client(
+        hosts="127.0.0.1:9092", topic_name='people-detection')
     consumer = topic.get_simple_consumer(fetch_message_max_bytes=104857600)
     for msg in consumer:
         if msg is not None:
