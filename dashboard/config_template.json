@@ -1,0 +1,16 @@
+{
+ "model":{
+   "api":{
+     "prediction":{
+       "imge":{
+         "uri":"",
+         "key":""
+       },
+        "url":{
+         "uri":"",
+         "key":""
+       }
+      }
+   }
+ }
+}
