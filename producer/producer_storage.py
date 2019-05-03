@@ -12,14 +12,6 @@ IMAGE_DIR_PATH = 'video_to_images'
 IMAGE_FREQUENCY = 5
 PRODUCER_TYPE = 'loop'
 
-arg_len = len(sys.argv)
-if arg_len > 1:
-    IMAGE_DIR_PATH = sys.argv[1]
-if arg_len > 2:
-    IMAGE_FREQUENCY = int(sys.argv[2])
-if arg_len > 3:
-    PRODUCER_TYPE = sys.argv[3]
-
 
 def gen_client(hosts="127.0.0.1:9092", topic_name='people-detection'):
     client = KafkaClient(hosts=hosts)
@@ -41,11 +33,11 @@ def image_producer_loop(client, topic):
         images_sorted.append('frame_{}.jpg'.format(image_idx))
 
     for image in itertools.cycle(images_sorted):
-        img = cv2.imread('{}/{}'.format(IMAGE_DIR_PATH, image))
+        img = open('{}/{}'.format(IMAGE_DIR_PATH, image), 'rb').read()
         frame_num = int(image[6:image.find('.')])
         msg = {
             'frame_num': frame_num,
-            'img_arr': img
+            'img': img
         }
         msg_pickle = pickle.dumps(msg)
         produce(topic, msg_pickle)
@@ -58,11 +50,11 @@ def image_producer_random(client, topic):
     images = os.listdir(IMAGE_DIR_PATH)
     while True:
         frame = random.choice(images)
-        img = cv2.imread('{}/{}'.format(IMAGE_DIR_PATH, frame))
+        img = open('{}/{}'.format(IMAGE_DIR_PATH, frame), 'rb').read()
         frame_num = int(frame[6:frame.find('.')])
         msg = {
             'frame_num': frame_num,
-            'img_arr': img
+            'img': img
         }
         msg_pickle = pickle.dumps(msg)
         produce(topic, msg_pickle)
@@ -72,6 +64,14 @@ def image_producer_random(client, topic):
 
 
 if __name__ == "__main__":
+    arg_len = len(sys.argv)
+    if arg_len > 1:
+        IMAGE_DIR_PATH = sys.argv[1]
+    if arg_len > 2:
+        IMAGE_FREQUENCY = int(sys.argv[2])
+    if arg_len > 3:
+        PRODUCER_TYPE = sys.argv[3]
+
     client, topic = gen_client(
         hosts="127.0.0.1:9092", topic_name='people-detection')
     print(client, topic)
@@ -82,4 +82,3 @@ if __name__ == "__main__":
 
 # To dos:
 # Dockerize the application
-# Add sys argv to enable changing the image request frequency

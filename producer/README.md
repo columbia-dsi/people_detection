@@ -7,6 +7,8 @@ There are two scripts written for the two different sources
 **producer_shakeshack.py** for the Shakeshack Images
 **producer_storage.py** for the Images in local storage
 
+Note that both scripts run in an infinite loop. The service/app needs to be killed to stop producing images. For the producer producing images from local storage, there are two options: option one is to produce images in the order of frames(inferred from the file name) and loop through the folder in an infinite loop while option two is to pick up random images from the folder in an infinite loop. Both scripts take an IMAGE_FREQUENCY parameter which dictates how often an image needs to be produced and sent to Kafka
+
 Before using any of these scripts:
 1) Make sure Kafka is installed (read the main README)
 2) Make sure all requirements are installed
@@ -26,7 +28,7 @@ python3 producer_shakeshack.py 5
 
 ### Storage Producer
 This script sets up the producer for the images in local storage. The script is written for images with filenames of a certain format: `frame_60.jpg` where 60 indicates the frame number  
-Ex: frame_60, frame_120, etc  
+Ex: frame_60.jpg, frame_120.jpg, etc  
 
 This script takes three arguments:  
 **IMAGE_DIR_PATH:** Path to the folder containing the images  
