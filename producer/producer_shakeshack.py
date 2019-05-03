@@ -10,8 +10,12 @@ import numpy as np
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from functools import partial
+import sys
 
-FREQUENCY_SECONDS = 60
+IMAGE_FREQUENCY = 5
+
+if len(sys.argv) > 1:
+    IMAGE_FREQUENCY = int(sys.argv[1])
 
 
 def get_image():
@@ -36,7 +40,7 @@ def save_image():
         img.save(open('shakeshack_image_{}.jpg'.format(req_time), 'wb'))
 
 
-def gen_client(hosts="127.0.0.1:9092", topic_name='test'):
+def gen_client(hosts="127.0.0.1:9092", topic_name='people-detection'):
     client = KafkaClient(hosts=hosts)
     topic = client.topics[topic_name]
     return client, topic
@@ -63,10 +67,11 @@ def pub_message(client, topic):
 
 
 if __name__ == "__main__":
-    client, topic = gen_client(hosts="127.0.0.1:9092", topic_name='test')
+    client, topic = gen_client(
+        hosts="127.0.0.1:9092", topic_name='people-detection')
     print(client, topic)
     pub_message_args = partial(pub_message, client, topic)
-    PeriodicCallback(pub_message_args, FREQUENCY_SECONDS * 1000).start()
+    PeriodicCallback(pub_message_args, IMAGE_FREQUENCY * 1000).start()
     IOLoop.current().start()
 
 # To dos:
