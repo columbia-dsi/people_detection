@@ -3,9 +3,9 @@ Source Data:
 1) Shakeshack Images - obtained by making a get request to an image service
 2) Images from Class - Video converted to frames and stored locally
 
-There are two scripts written for the two different sources
-**producer_shakeshack.py** for the Shakeshack Images
-**producer_storage.py** for the Images in local storage
+There are two scripts written for the two different sources    
+**1) producer_shakeshack.py** for the Shakeshack Images    
+**2) producer_storage.py** for the Images in local storage    
 
 Note that both scripts run in an infinite loop. The service/app needs to be killed to stop producing images. For the producer producing images from local storage, there are two options: option one is to produce images in the order of frames(inferred from the file name) and loop through the folder in an infinite loop while option two is to pick up random images from the folder in an infinite loop. Both scripts take an IMAGE_FREQUENCY parameter which dictates how often an image needs to be produced and sent to Kafka
 
