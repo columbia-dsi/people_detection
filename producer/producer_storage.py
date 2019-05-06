@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     client, topic = gen_client(
         hosts="127.0.0.1:9092", topic_name='people-detection')
-    print(client, topic)
+    # print(client, topic)
     if PRODUCER_TYPE == 'loop':
         image_producer_loop(client, topic)
     else:
