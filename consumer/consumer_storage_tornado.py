@@ -10,6 +10,10 @@ import os
 from tornado import gen, httpserver, ioloop, log, web
 import random
 import time
+import sys
+
+
+IMAGE_FREQUENCY = 30
 
 
 class MainHandler(web.RequestHandler):
@@ -60,7 +64,7 @@ def get_prediction():
                 pred_len = model(msg)
                 prediction_json = {'num_of_predictions': pred_len}
             # The sleep time should be equal to or larger than the produce time
-            yield gen.sleep(30)
+            yield gen.sleep(IMAGE_FREQUENCY)
 
 
 def make_app():
@@ -84,6 +88,9 @@ def main():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        IMAGE_FREQUENCY = int(sys.argv[1])
+
     client, topic = gen_client(
         hosts="127.0.0.1:9092", topic_name='people-detection')
     consumer = topic.get_simple_consumer(fetch_message_max_bytes=104857600)
