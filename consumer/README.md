@@ -1,10 +1,10 @@
 ## Image Consumer
-There are three versions of scripts written:
-**consumer_shakeshack.py** for the Shakeshack Images
-**consumer_storage.py** for the Images in local storage
+There are three versions of scripts written:    
+**consumer_shakeshack.py** for the Shakeshack Images    
+**consumer_storage.py** for the Images in local storage    
 **consumer_storage_tornado.py** for the Images in local storage plus the consumer is a tornado web application that serves the predictions    
 
-Note that the scripts run in an infinite loop consuming messages. For the consumer_storage_tornado script, there is an IMAGE_FREQUENCY parameter which dictates how often the consumer consumes a message. This is required because the consumer runs on a single thread but also needs to act as a tornado app that serves the predictions required for the dashboard. The IMAGE_FREQUENCY is the duration for which execution is yielded between message consumption - this allows the tornado app to respond to the requests coming its way.    
+Note that the scripts run in an infinite loop consuming messages. For the consumer_storage_tornado script, there is an **IMAGE_FREQUENCY** parameter which dictates how often the consumer consumes a message. This is required because the consumer runs on a single thread but also needs to act as a tornado app that serves the predictions required for the dashboard. The **IMAGE_FREQUENCY** is the duration for which execution is yielded between message consumption - this allows the tornado app to respond to the requests coming its way.    
 
 Before using any of these scripts:
 1) If the host IP/port for the Kafka broker is not `127.0.0.1:9092` or if the topic name is not `people-detection`, update the consumer script
