@@ -22,6 +22,7 @@ from modeling.model_builder import Generalized_RCNN
 import datasets.dummy_datasets as datasets
 import utils.misc as misc_utils
 import utils.net as net_utils
+import utils.vis as vis
 from utils.timer import Timer
 
 def load_model(config_path, checkpoint_path):
@@ -48,18 +49,24 @@ def load_model(config_path, checkpoint_path):
 
 class PredictHandler(RequestHandler):
     def post(self):
-        cls_boxes, cls_segms, cls_keyps = self.predict()
-        self.write(f'{cls_boxes}\n{cls_segms}\n{cls_keyps}')
+        boxes, segms, keyps, classes = self.predict()
+        sorted_idx = np.argsort(-(boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))
+        class_names = [vis.get_class_string(classes[i], boxes[i, -1], self.application.dataset) for i in sorted_idx]
+        #self.write(f'{boxes}\n{segms}\n{keyps}\n{classes}')
+        self.write({'classes':class_names})
 
     def predict(self):
         img = Image.open(BytesIO(self.request.files['img'][0]['body']))
         timers = defaultdict(Timer)
-        return im_detect_all(self.application.model, np.asarray(img), timers = timers)
+        pred = im_detect_all(self.application.model, np.asarray(img), timers = timers)
+        converted = vis.convert_from_cls_format(*pred)
+        return converted
 
 class ModelApplication(Application):
     def __init__(self, handler_mapping, config, checkpoint):
+        self.dataset = datasets.get_coco_dataset()
         self.model = load_model(config, checkpoint)
-        super(ModelApplication, self).__init__(handler_mapping)
+        super(ModelApplication, self).__init__(handler_mapping, debug = True)
 
 if __name__ == '__main__':
     if not torch.cuda.is_available():
