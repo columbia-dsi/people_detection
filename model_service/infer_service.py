@@ -10,6 +10,9 @@ from tornado.web import RequestHandler, Application
 from tornado.ioloop import IOLoop, PeriodicCallback
 
 import torch
+from PIL import Image
+from io import StringIO, BytesIO
+import numpy as np
 
 import _init_paths
 import nn
@@ -48,10 +51,10 @@ class PredictHandler(RequestHandler):
         cls_boxes, cls_segms, cls_keyps = self.predict()
         self.write(f'{cls_boxes}\n{cls_segms}\n{cls_keyps}')
 
-    def predict(self, img):
-        img = cv2.imread(self.request.body)
+    def predict(self):
+        img = Image.open(BytesIO(self.request.files['img'][0]['body']))
         timers = defaultdict(Timer)
-        return im_detect_all(self.application.model, img, timers = timers)
+        return im_detect_all(self.application.model, np.asarray(img), timers = timers)
 
 class ModelApplication(Application):
     def __init__(self, handler_mapping, config, checkpoint):
@@ -63,10 +66,10 @@ if __name__ == '__main__':
         sys.exit("Need a CUDA device to run the code.")
 
     checkpoint = 'panet.pth'
-    config = 'e2e_panet_R-50-FPN_2x_mask.yaml'
+    config = './config/e2e_panet_R-50-FPN_2x_mask.yaml'
     handler_mapping = [
                        (r'/predict', PredictHandler),
                       ]
-    application = ModelApplication(handler_mapping)
+    application = ModelApplication(handler_mapping, config, checkpoint)
     application.listen(7777)
     IOLoop.current().start()
