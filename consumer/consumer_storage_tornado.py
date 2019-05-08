@@ -33,7 +33,8 @@ def decode(msg):
     return msg
 
 def Bbox(text_file):
-    data = json.load(text_file)
+    with open(text_file) as data_file:
+        data = json.load(data_file)
     df = pd.DataFrame(data['predictions '])
     df1 = pd.DataFrame(dict(df['boundingBox '])).T
     df1['right '] = df1['left '] + df1['width ']
