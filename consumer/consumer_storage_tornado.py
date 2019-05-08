@@ -32,6 +32,33 @@ def decode(msg):
     msg = pickle.loads(msg)
     return msg
 
+def Bbox(text_file):
+    data = json.load(text_file)
+    df = pd.DataFrame(data['predictions '])
+    df1 = pd.DataFrame(dict(df['boundingBox '])).T
+    df1['right '] = df1['left '] + df1['width ']
+    df1['bottom '] = df1['top '] - df1['height ']
+    df = df1.merge(df['probability '], right_index=True, left_index=True)
+    left_most = min(df['left '])
+    right_most = max(df['left ']) + df.loc[df['left '] == max(df['left ']),'width '].iloc[0]
+    bottom_most = min(df['top '])
+    top_most = max(df['top ']) + df.loc[df['top '] == max(df['top ']),'height '].iloc[0]
+    height_avg = df['height '].mean()
+    width_avg = df['width '].mean()
+    nrows = int((top_most - bottom_most)/height_avg)
+    ncols = int((right_most - left_most)/width_avg)
+    mat = np.zeros((nrows, ncols))
+    for i in range(nrows):
+        for j in range(ncols):
+            top_n = top_most - i*(height_avg)
+            bottom_n = top_most - (i+1)*height_avg
+            left_n = left_most + j*width_avg
+            right_n = left_most + (j+1)*width_avg
+            mat[i][j] = max(df['probability '].loc[(((df['top '] <= top_n) & (df['top '] >= bottom_n))
+                                                    | ((df['bottom '] <= top_n) & (df['bottom '] >= bottom_n)))
+                                                   | (((df['right '] <= right_n) & (df['right '] >= left_n))
+                                                      | ((df['left '] <= right_n) & (df['left '] >= left_n)))])
+    return mat
 
 def model(msg):
     """Call the model from here maybe"""
@@ -47,7 +74,9 @@ def model(msg):
         len(predictions['predictions'])))
     print('Frame Number:', msg['frame_num'],
           'Image Dimensions:', np.array(Image.open(BytesIO(msg['img']))).shape)
-    return len(predictions['predictions'])
+
+    Coord_matrix = Bbox(predictions)
+    return Coord_matrix, len(predictions['predictions'])
 
 
 @gen.coroutine
@@ -61,8 +90,8 @@ def get_prediction():
             if msg is not None:
                 msg = decode(msg.value)
                 print("Calling the vision API")
-                pred_len = model(msg)
-                prediction_json = {'num_of_predictions': pred_len}
+                XY_coords, pred_len = model(msg)
+                prediction_json = {'num_of_predictions': pred_len, 'Coords_with_prob': XY_coords}
             # The sleep time should be equal to or larger than the produce time
             yield gen.sleep(IMAGE_FREQUENCY)
 
