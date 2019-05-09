@@ -33,19 +33,19 @@ def decode(msg):
     return msg
 
 def Bbox(text_file):
-    with open(text_file) as data_file:
-        data = json.load(data_file)
-    df = pd.DataFrame(data['predictions '])
-    df1 = pd.DataFrame(dict(df['boundingBox '])).T
-    df1['right '] = df1['left '] + df1['width ']
-    df1['bottom '] = df1['top '] - df1['height ']
-    df = df1.merge(df['probability '], right_index=True, left_index=True)
-    left_most = min(df['left '])
-    right_most = max(df['left ']) + df.loc[df['left '] == max(df['left ']),'width '].iloc[0]
-    bottom_most = min(df['top '])
-    top_most = max(df['top ']) + df.loc[df['top '] == max(df['top ']),'height '].iloc[0]
-    height_avg = df['height '].mean()
-    width_avg = df['width '].mean()
+    #add the IOU and hardcode locations
+
+    df = pd.DataFrame(text_file['predictions'])
+    df1 = pd.DataFrame(dict(df['boundingBox'])).T
+    df1['right'] = df1['left'] + df1['width']
+    df1['bottom'] = df1['top'] - df1['height']
+    df = df1.merge(df['probability'], right_index=True, left_index=True)
+    left_most = min(df['left'])
+    right_most = max(df['left']) + df.loc[df['left'] == max(df['left']),'width'].iloc[0]
+    bottom_most = min(df['top'])
+    top_most = max(df['top']) + df.loc[df['top'] == max(df['top']),'height'].iloc[0]
+    height_avg = df['height'].mean()
+    width_avg = df['width'].mean()
     nrows = int((top_most - bottom_most)/height_avg)
     ncols = int((right_most - left_most)/width_avg)
     mat = np.zeros((nrows, ncols))
@@ -55,10 +55,10 @@ def Bbox(text_file):
             bottom_n = top_most - (i+1)*height_avg
             left_n = left_most + j*width_avg
             right_n = left_most + (j+1)*width_avg
-            mat[i][j] = max(df['probability '].loc[(((df['top '] <= top_n) & (df['top '] >= bottom_n))
-                                                    | ((df['bottom '] <= top_n) & (df['bottom '] >= bottom_n)))
-                                                   | (((df['right '] <= right_n) & (df['right '] >= left_n))
-                                                      | ((df['left '] <= right_n) & (df['left '] >= left_n)))])
+            mat[i][j] = max(df['probability '].loc[(((df['top'] <= top_n) & (df['top'] >= bottom_n))
+                                                    | ((df['bottom'] <= top_n) & (df['bottom'] >= bottom_n)))
+                                                   | (((df['right'] <= right_n) & (df['right'] >= left_n))
+                                                      | ((df['left'] <= right_n) & (df['left'] >= left_n)))])
     return mat
 
 def model(msg):
