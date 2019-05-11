@@ -1,6 +1,6 @@
 import pickle
 from tornado import gen, httpserver, ioloop, log, web
-
+import sys
 
 PREDICTION_DIR_PATH = '/Users/harish/IdeaProjects/datascience_certification/data_analytics_pipeline/project/prediction'
 
@@ -31,6 +31,9 @@ def main():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        PREDICTION_DIR_PATH = int(sys.argv[1])
+
     main()
 
 # To dos:
