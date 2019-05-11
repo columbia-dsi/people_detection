@@ -31,15 +31,15 @@ This script sets up the producer for the images in local storage. The script is 
 Ex: frame_60.jpg, frame_120.jpg, etc  
 
 This script takes three arguments:  
-**IMAGE_DIR_PATH:** Path to the folder containing the images  
-Default value: `video_to_images`  
+**IMAGE_DIR_PATH:** Local path (can either be relative or absolute) to the folder containing the images  
+Default value: Directory in my local path - so this **has** to either be passed or manually updated in the script  
 **IMAGE_FREQUENCY:** Number of seconds between consecutive reads from local storage for images to be sent to Kafka.  
-Default value: `5`  
+Default value: `5`    
 **PRODUCER_TYPE:** `loop` or `random`  
 *loop:* Read images in the folder in a loop in the order of frame number  
 *random:* Read random images from the folder  
 Default value: `loop`  
 
 ```
-python3 producer_storage.py video_to_images 5 loop
+python3 producer_storage.py /Users/user1/Downloads/video_to_images 5 loop
 ```

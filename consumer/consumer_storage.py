@@ -7,6 +7,9 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 import requests
 import os
+import sys
+
+PREDICTION_DIR_PATH = '/Users/harish/IdeaProjects/datascience_certification/data_analytics_pipeline/project/prediction'
 
 
 def gen_client(hosts="127.0.0.1:9092", topic_name='people-detection'):
@@ -28,8 +31,12 @@ def model(msg):
         'Prediction-Key': os.getenv('AZURE_VIS_KEY'),
         'Content-Type': 'application/octet-stream'
     }
+    print("Calling the vision API")
     r = requests.post(url=url, headers=headers, data=msg['img'])
     predictions = r.json()
+    prediction_json = {'num_of_predictions': len(predictions['predictions'])}
+    pickle.dump(prediction_json, open(
+        '{}/pred.pickle'.format(PREDICTION_DIR_PATH), 'wb'))
     print('Number of object predictions: {}'.format(
         len(predictions['predictions'])))
     print('Frame Number:', msg['frame_num'],
@@ -37,6 +44,9 @@ def model(msg):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        PREDICTION_DIR_PATH = int(sys.argv[1])
+
     client, topic = gen_client(
         hosts="127.0.0.1:9092", topic_name='people-detection')
     consumer = topic.get_simple_consumer(fetch_message_max_bytes=104857600)
