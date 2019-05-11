@@ -1,6 +1,6 @@
 # Prompt for generic information
 $resourceGroupName = "kafka"
-$baseName = "hdinsight"
+$baseName = "hdinsightpeopledetection"
 $location = "eastus"
 $rootCert = "caCert.pem"
 
