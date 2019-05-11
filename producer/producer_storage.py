@@ -8,7 +8,7 @@ import time
 import random
 import sys
 
-IMAGE_DIR_PATH = 'video_to_images'
+IMAGE_DIR_PATH = '/Users/harish/IdeaProjects/datascience_certification/data_analytics_pipeline/project/video_to_images'
 IMAGE_FREQUENCY = 5
 PRODUCER_TYPE = 'loop'
 
