@@ -1,10 +1,27 @@
 ## Using Powershell
 
-On Mac, first install powershell by running `brew cask install powershell`. Once you have powershell installed, run `sudo pwsh` and then `Install-Module -Name Az -AllowClobber`. This will install azure modules into Powershell, which are required for the following script.
+On Mac, first install powershell by running `brew cask install powershell`. Once you have powershell installed, run `sudo pwsh` and then `Install-Module -Name Az -AllowClobber`. This will install azure modules into Powershell, which are required for the spinup script.
 
-Next, you'll follow the instructions below to spin up an HDInsight Kafka cluster that is accessible publicly. 
+After that, you need to generate a self-signed certificate so that you can authenticate into the cluster. Instructions are here (https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-certificates-point-to-site) but they don't actually work because you can't install the module needed on Mac; instead, follow these instructions: https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-certificates-point-to-site-linux. To install strongswan on Mac, just `brew install strongswan`. Also install openssl if you don't have it. Finally, be sure to use `sudo` when running the `ipsec` commands:
+
+```sudo ipsec pki --gen --outform pem > caKey.pem```
+```sudo ipsec pki --self --in caKey.pem --dn "CN=VPN CA" --ca --outform pem > caCert.pem``` 
+
+```openssl x509 -in caCert.pem -outform der | base64 -w0 ; echo```
+
+```export PASSWORD="password"```
+```export USERNAME="client"```
+
+```sudo ipsec pki --gen --outform pem > "${USERNAME}Key.pem"```
+```sudo ipsec pki --pub --in "${USERNAME}Key.pem" | ipsec pki --issue --cacert caCert.pem --cakey caKey.pem --dn "CN=${USERNAME}" --san "${USERNAME}" --flag clientAuth --outform pem > "${USERNAME}Cert.pem"```
+
+```openssl pkcs12 -in "${USERNAME}Cert.pem" -inkey "${USERNAME}Key.pem" -certfile caCert.pem -export -out "${USERNAME}.p12" -password "pass:${PASSWORD}"```
+
+Next, you'll follow the instructions below to spin up an HDInsight Kafka cluster that is accessible publicly. These have been copied over into a separate file in this folder for convenience. 
 
 https://docs.microsoft.com/en-us/azure/hdinsight/kafka/apache-kafka-connect-vpn-gateway#vpnclient
+
+Once that's all done executing successfully (hopefully!), don't forget to return to the link above to configure the cluster for IP advertising (that's the section following all the Powershell code).
 
 ## Manual Instructions
 
