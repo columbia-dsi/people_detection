@@ -1,8 +1,8 @@
 ## Using Powershell
 
-On Mac, first install powershell by running `brew cask install powershell`. 
+On Mac, first install powershell by running `brew cask install powershell`. Once you have powershell installed, run `sudo pwsh` and then `Install-Module -Name Az -AllowClobber`. This will install azure modules into Powershell, which are required for the following script.
 
-Next, you'll follow the instructions here to spin up an HDInsight Kafka cluster that is accessible publicly. 
+Next, you'll follow the instructions below to spin up an HDInsight Kafka cluster that is accessible publicly. 
 
 https://docs.microsoft.com/en-us/azure/hdinsight/kafka/apache-kafka-connect-vpn-gateway#vpnclient
 
