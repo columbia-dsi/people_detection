@@ -7,6 +7,7 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 import requests
 import os
+import sys
 
 PREDICTION_DIR_PATH = '/Users/harish/IdeaProjects/datascience_certification/data_analytics_pipeline/project/prediction'
 
@@ -43,6 +44,9 @@ def model(msg):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        PREDICTION_DIR_PATH = int(sys.argv[1])
+
     client, topic = gen_client(
         hosts="127.0.0.1:9092", topic_name='people-detection')
     consumer = topic.get_simple_consumer(fetch_message_max_bytes=104857600)
