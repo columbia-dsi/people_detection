@@ -8,17 +8,35 @@ var getAbsolutePath = require('path').resolve;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('dashboard', { title: 'Dashboard' });
+    //Connect to consumer API
+    request({
+        uri: config.model.api.kafka.consumer.uri,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+      },
+      function (error, response, body) {
+          if (!error && response.statusCode == 200 || response.statusCode == 304) {
+              console.log("body:", JSON.stringify(body));
+              res.render('dashboard', { title: 'Dashboard', content: body});
+          }
+          else{
+             console.log('error:',error);
+             console.log('body:', body);
+          }
+      });
+    
 });
 
 router.get('/index', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Express' });
 });
 
 /*Model*/
 
 router.get('/model', function(req, res, next) {
-  res.render('model', { title: 'Model' });
+    res.render('model', { title: 'Model' });
 });
 
 

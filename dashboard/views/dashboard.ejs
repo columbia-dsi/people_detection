@@ -158,6 +158,9 @@
                                         <div class="recent-report2 m-b-40">
                                             <div class="title-wrap">
                                                 <h3 class="title-3">main reports</h3>
+                                                <% if(locals.content) {%>
+                                                <p>Total Predictions: <span style="color:red;"> <%= JSON.parse(content)['num_of_predictions'] %> </span> <%= JSON.parse(content)['Coords_with_prob'] %></p>
+                                                <% } %>
                                                 <div class="chart-info-wrap">
                                                     <div class="chart-note mr-0">
                                                         <span class="dot dot--green"></span>
@@ -167,7 +170,7 @@
                                             </div>
                                             <div class="chart-wrap">
                                                 <iframe 
-                                                    src="/map" frameborder=0 scrolling=no allowtransparency=true width=1000 height=800  allowfullscreen>
+                                                    src="/map?arr=<%= encodeURIComponent(JSON.stringify(JSON.parse(content)['Coords_with_prob'])) %>" frameborder=0 scrolling=no allowtransparency=true width=1000 height=800  allowfullscreen>
                                                 </iframe>
                                             </div>
                                         </div>
@@ -483,6 +486,10 @@
 
     <!-- Main JS-->
     <script src="js/main.js"></script>
+
+    <% if(locals.content) {%>
+      <p>Result: <%= JSON.stringify(content) %></p>
+    <% } %>
 
 </body>
 
