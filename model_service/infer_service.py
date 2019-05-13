@@ -118,5 +118,5 @@ if __name__ == '__main__':
                       ]
     application = ModelApplication(handler_mapping, config, checkpoint)
     application.listen(8080)
-    IOLoop.current().start()
     IOloop.current().spawn_callback(application.predict)
+    IOLoop.current().start()
