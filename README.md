@@ -51,3 +51,5 @@ Or, run the app (Mac OS/Linux):
 ```
 
 ## Pipeline
+
+![Final Project Architecture](/test/Pipeline.jpg)
