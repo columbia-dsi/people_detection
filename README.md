@@ -52,4 +52,4 @@ Or, run the app (Mac OS/Linux):
 
 ## Pipeline
 
-![Final Project Architecture](/test/Pipeline.jpg)
+![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
