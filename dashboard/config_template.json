@@ -1,0 +1,21 @@
+{
+ "model":{
+   "api":{
+     "prediction":{
+       "imge":{
+         "uri":"",
+         "key":""
+       },
+        "url":{
+         "uri":"",
+         "key":""
+       }
+      },
+      "kafka":{
+        "consumer":{
+          "uri":""
+        }
+      }
+   }
+ }
+}

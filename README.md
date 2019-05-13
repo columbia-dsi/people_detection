@@ -30,6 +30,16 @@ zkServer stop
 Finally, CTRL+C in the terminal window in which you have kafka up to kill it.
 
 
+## Kafka Settings Update
+Before the producer and consumer are run, the kafka settings need to be updated to handle large messages. As we are dealing with images, the messages are larger than the default setting provided by Kafka. For this, go to the server.properties file inside the config folder and add the following properties:
+```
+message.max.bytes=104857600
+replica.fetch.max.bytes=104857600
+max.message.bytes=104857600
+```
+Note that the config folder will be present inside the kafka installation folder
+
+
 ## Dashboard
 
 
@@ -40,18 +50,31 @@ Change directory:
 Install dependencies:
      > npm install
 
-Run the app:
+Make your own configure file from config_template.json:
+     > config.json
+
+Run the app (Windows):
      > SET DEBUG=dashboard:* & npm start
+
+Or, run the app (Mac OS/Linux):
+     > npm start
 ```
 
-## Pipeline
+## Deployment
+#### Model Play Ground:
 
-## Kafka Settings Update
-Before the producer and consumer are run, the kafka settings need to be updated to handle large messages. As we are dealing with images, the messages are larger than the default setting provided by Kafka. For this, go to the server.properties file inside the config folder and add the following properties:
-```
-message.max.bytes=104857600
-replica.fetch.max.bytes=104857600
-max.message.bytes=104857600
-```
+https://people-detection.azurewebsites.net/model
 
-Note that the config folder will be present inside the kafka installation folder
+#### Dashboard:
+
+https://people-detection.azurewebsites.net
+
+
+## Final Architecture
+
+![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
+
+## JIRA
+
+https://toydemoproject.atlassian.net/jira/software/projects/PD/boards/14
+
