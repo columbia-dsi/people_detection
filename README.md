@@ -50,6 +50,15 @@ Or, run the app (Mac OS/Linux):
      > npm start
 ```
 
+## Deployment
+#### Model
+
+https://people-detection.azurewebsites.net/model
+
+#### Dashboard
+
+https://people-detection.azurewebsites.net
+
 ## Pipeline
 
 ![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
