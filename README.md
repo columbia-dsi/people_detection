@@ -59,6 +59,9 @@ https://people-detection.azurewebsites.net/model
 
 https://people-detection.azurewebsites.net
 
+#### Consume API (Kafka on EC2)
+
+http://3.211.225.41:8080
 
 ## Pipeline
 
