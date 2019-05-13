@@ -58,6 +58,9 @@ def Bbox(text_file):
                                                 | ((df['bottom'] <= top_n) & (df['bottom'] >= bottom_n)))
                                                | (((df['right'] <= right_n) & (df['right'] >= left_n))
                                                   | ((df['left'] <= right_n) & (df['left'] >= left_n)))]).mean()
+    mean_overall = mat.mean()
+    mat[mat <= mean_overall] = 0
+    mat[mat > mean_overall] *= 2
     return mat.tolist()
 
 def model(msg):
