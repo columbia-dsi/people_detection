@@ -8,6 +8,7 @@ from pykafka.common import OffsetType
 import requests
 import os
 import sys
+import pandas as pd
 
 PREDICTION_DIR_PATH = '/Users/harish/IdeaProjects/datascience_certification/data_analytics_pipeline/project/prediction'
 
@@ -23,6 +24,35 @@ def decode(msg):
     return msg
 
 
+def Bbox(predictions):
+    df = pd.DataFrame(predictions['predictions'])
+    df1 = pd.DataFrame(dict(df['boundingBox'])).T
+    df1['right'] = df1['left'] + df1['width']
+    df1['bottom'] = df1['top'] - df1['height']
+    df = df1.merge(df['probability'], right_index=True, left_index=True)
+    left_most = min(df['left'])
+    # right_most = max(df['left']) + df.loc[df['left'] == max(df['left']), 'width'].iloc[0]
+    # bottom_most = min(df['top'])
+    top_most = max(df['top']) + df.loc[df['top']
+                                       == max(df['top']), 'height'].iloc[0]
+    height_avg = df['height'].mean()
+    width_avg = df['width'].mean()
+    nrows = 5
+    ncols = 9
+    mat = np.zeros((nrows, ncols))
+    for i in range(nrows):
+        for j in range(ncols):
+            top_n = top_most - i * (height_avg)
+            bottom_n = top_most - (i + 1) * height_avg
+            left_n = left_most + j * width_avg
+            right_n = left_most + (j + 1) * width_avg
+            mat[i][j] = (df['probability'].loc[(((df['top'] <= top_n) & (df['top'] >= bottom_n))
+                                                | ((df['bottom'] <= top_n) & (df['bottom'] >= bottom_n)))
+                                               | (((df['right'] <= right_n) & (df['right'] >= left_n)) |
+                                                ((df['left'] <= right_n) & (df['left'] >= left_n)))]).mean()
+    return mat.tolist()
+
+
 def model(msg):
     """Call the model from here maybe"""
     url = 'https://southcentralus.api.cognitive.microsoft.com/customvision/v3.0/Prediction/\
@@ -34,13 +64,16 @@ def model(msg):
     print("Calling the vision API")
     r = requests.post(url=url, headers=headers, data=msg['img'])
     predictions = r.json()
-    prediction_json = {'num_of_predictions': len(predictions['predictions'])}
+    pred_len = len(predictions['predictions'])
+    XY_coords = Bbox(predictions)
+    prediction_json = {'num_of_predictions': pred_len,
+                       'Coords_with_prob': XY_coords}
     pickle.dump(prediction_json, open(
         '{}/pred.pickle'.format(PREDICTION_DIR_PATH), 'wb'))
-    print('Number of object predictions: {}'.format(
-        len(predictions['predictions'])))
     print('Frame Number:', msg['frame_num'],
           'Image Dimensions:', np.array(Image.open(BytesIO(msg['img']))).shape)
+    print('Number of object predictions: {}'.format(
+        pred_len))
 
 
 if __name__ == "__main__":
