@@ -36,15 +36,15 @@ https://toydemoproject.atlassian.net/jira/software/projects/PD/boards/14
 
 ## Components and their description
 
-* Producer – Service that pulls images from local storage and sends the images to a Kafka topic
-* Kafka Server – a single node Kafka cluster, with one topic and a single partition. The cluster is managed using Zookeeper, so that we can use multiple nodes, topics and partitions if necessary
-* Consumer – Polls images from Kakfa and makes request to Azure API service to predict on images. Stores the prediction locally
+* **Producer** – Service that pulls images from local storage and sends the images to a Kafka topic
+* **Kafka Server** – a single node Kafka cluster, with one topic and a single partition. The cluster is managed using Zookeeper, so that we can use multiple nodes, topics and partitions if necessary
+* **Consumer** – Polls images from Kakfa and makes request to Azure API service to predict on images. Stores the prediction locally
     * Input – Camera Image
     * Output – Array of probabilities of seats being occupied
-* Prediction Service - Reads the output stored by the consumer and makes it available through a REST API set up using Tornado
+* **Prediction Service** - Reads the output stored by the consumer and makes it available through a REST API set up using Tornado
     * Input – Array of probabilities of seats being occupied
     * Output – Server hosting the predictions for the dashboard to read from
-* UI/Dashboard – Frontend js app displaying color intensity corresponding to probability of the seat being occupied
+* **UI/Dashboard** – Frontend js app displaying color intensity corresponding to probability of the seat being occupied
     * Input – Array of probabilities of seats being occupied
     * Output – web application indicating occupied/empty seats
 
