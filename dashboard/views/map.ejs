@@ -7,6 +7,11 @@
   <body>
 
   <script>
+    var url_string = window.location.href
+    var url = new URL(url_string);
+    var arrString = url.searchParams.get("arr");
+    var arr = JSON.parse(arrString);
+
     var margin = {top: 0, left: 0, right: 0, bottom: 0,},
         width = 800,
         height = 600;
@@ -34,11 +39,15 @@
       }
     }
 
-    //Overwrite matrix
+    //Overwrite matrix - Local
     if(<%= locals.content %>){
       matrix = <%- JSON.stringify(locals.content) %>;
       console.log(matrix);
     }
+
+    //Overwrite matrix - Connected to kafka pipeline
+    matrix = arr ? arr : matrix;
+    console.log(matrix);
 
     var x = d3.scale.ordinal()
         .domain(d3.range(numcols))
