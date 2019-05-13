@@ -24,6 +24,7 @@ router.get('/', function(req, res, next) {
           else{
              console.log('error:',error);
              console.log('body:', body);
+             res.render('dashboard', { title: 'Dashboard', content: ''});
           }
       });
     

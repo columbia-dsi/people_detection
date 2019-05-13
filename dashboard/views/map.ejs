@@ -46,7 +46,7 @@
     }
 
     //Overwrite matrix - Connected to kafka pipeline
-    matrix = arr;
+    matrix = arr ? arr : matrix;
     console.log(matrix);
 
     var x = d3.scale.ordinal()

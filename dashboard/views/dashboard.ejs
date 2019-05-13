@@ -169,9 +169,15 @@
                                                 </div>
                                             </div>
                                             <div class="chart-wrap">
-                                                <iframe 
+                                             <% if(locals.content) {%>
+                                               <iframe 
                                                     src="/map?arr=<%= encodeURIComponent(JSON.stringify(JSON.parse(content)['Coords_with_prob'])) %>" frameborder=0 scrolling=no allowtransparency=true width=1000 height=800  allowfullscreen>
                                                 </iframe>
+                                             <% } else { %>
+                                                <iframe 
+                                                    src="/map" frameborder=0 scrolling=no allowtransparency=true width=1000 height=800  allowfullscreen>
+                                                </iframe>
+                                             <% } %>
                                             </div>
                                         </div>
                                         <!-- END MAIN REPORT-->
