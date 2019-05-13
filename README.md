@@ -70,7 +70,9 @@ https://people-detection.azurewebsites.net/model
 https://people-detection.azurewebsites.net
 
 #### Consume API (Kafka on EC2)
-
+*REST API for predictions (used by the dashboard)*
+Once an image is read by the consumer, the consumer calls the Azure Model Service, operates on the response and writes the response to local storage. The prediction service then reads the stored output and makes it available via a HTTP server written using tornado that is hosted on EC2.
+The endpoint to get this response is:
 http://3.211.225.41:8080
 
 ## Final Architecture
