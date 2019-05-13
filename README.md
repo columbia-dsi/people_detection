@@ -9,6 +9,31 @@ Project for the Data Analytics Pipeline Course (spring 2019) taught by Prof. Ada
 * The current version uses static images that we captured from a video that we took of our class. This can be set up to run on real time images obtained from a camera
 * We followed a master/dev/feature branch structure on GitHub, requiring a PR from feature branch to dev and one approving review
 
+## Important Links
+
+All the components of the project and the integration has been explained below. Also, there are instructions below to get the application working on local. For demonstration, the producer, consumer and the prediction service have been set up on AWS EC2. The dashboard has been set up on Azure. Listing the important links here for easy access before moving on to explanation of the project
+
+#### Model Play Ground:
+
+https://people-detection.azurewebsites.net/model
+
+#### Dashboard:
+
+https://people-detection.azurewebsites.net
+
+#### REST API for predictions (used by the dashboard):
+The endpoint to get the response from the prediction service (tornado app) hosted on AWS EC2 is:  
+http://3.211.225.41:8080
+
+## Final Architecture
+
+![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
+
+## JIRA
+
+https://toydemoproject.atlassian.net/jira/software/projects/PD/boards/14
+
+
 ## Components and their description
 
 * Producer – Service that pulls images from local storage and sends the images to a Kafka topic
@@ -123,27 +148,3 @@ Run the app (Windows):
 Or, run the app (Mac OS/Linux):
      > npm start
 ```
-
-## Deployment
-
-While the above instructions were to get the application working on local, the producer, consumer and the prediction service have been set up on AWS EC2 for app demo. The dashboard has been set up on Azure.
-
-#### Model Play Ground:
-
-https://people-detection.azurewebsites.net/model
-
-#### Dashboard:
-
-https://people-detection.azurewebsites.net
-
-#### REST API for predictions (used by the dashboard):
-The endpoint to get the response from the prediction service (tornado app) hosted on AWS EC2 is:  
-http://3.211.225.41:8080
-
-## Final Architecture
-
-![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
-
-## JIRA
-
-https://toydemoproject.atlassian.net/jira/software/projects/PD/boards/14
