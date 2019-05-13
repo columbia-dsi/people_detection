@@ -1,0 +1,120 @@
+# Prompt for generic information
+$resourceGroupName = "kafka"
+$baseName = "hdinsightpeopledetection"
+$location = "eastus"
+$rootCert = "caCert.pem"
+
+# Prompt for HDInsight credentials
+$adminCreds = Get-Credential -Message "Enter the HTTPS user name and password for the HDInsight cluster" -UserName "admin"
+$sshCreds = Get-Credential -Message "Enter the SSH user name and password for the HDInsight cluster" -UserName "sshuser"
+
+# Names for Azure resources
+$networkName = "net-$baseName"
+$clusterName = "kafka-$baseName"
+$storageName = "store$baseName" # Can't use dashes in storage names
+$defaultContainerName = $clusterName
+$defaultSubnetName = "default"
+$gatewaySubnetName = "GatewaySubnet"
+$gatewayPublicIpName = "GatewayIp"
+$gatewayIpConfigName = "GatewayConfig"
+$vpnRootCertName = "rootcert"
+$vpnName = "VPNGateway"
+
+# Network settings
+$networkAddressPrefix = "10.0.0.0/16"
+$defaultSubnetPrefix = "10.0.0.0/24"
+$gatewaySubnetPrefix = "10.0.1.0/24"
+$vpnClientAddressPool = "172.16.201.0/24"
+
+# HDInsight settings
+$HdiWorkerNodes = 3
+$hdiVersion = "3.6"
+$hdiType = "Kafka"
+
+# Create the resource group that contains everything
+New-AzResourceGroup -Name $resourceGroupName -Location $location
+
+# Create the subnet configuration
+$defaultSubnetConfig = New-AzVirtualNetworkSubnetConfig -Name $defaultSubnetName `
+    -AddressPrefix $defaultSubnetPrefix
+$gatewaySubnetConfig = New-AzVirtualNetworkSubnetConfig -Name $gatewaySubnetName `
+    -AddressPrefix $gatewaySubnetPrefix
+
+# Create the subnet
+New-AzVirtualNetwork -Name $networkName `
+    -ResourceGroupName $resourceGroupName `
+    -Location $location `
+    -AddressPrefix $networkAddressPrefix `
+    -Subnet $defaultSubnetConfig, $gatewaySubnetConfig
+
+# Get the network & subnet that were created
+$network = Get-AzVirtualNetwork -Name $networkName `
+    -ResourceGroupName $resourceGroupName
+$gatewaySubnet = Get-AzVirtualNetworkSubnetConfig -Name $gatewaySubnetName `
+    -VirtualNetwork $network
+$defaultSubnet = Get-AzVirtualNetworkSubnetConfig -Name $defaultSubnetName `
+    -VirtualNetwork $network
+
+# Set a dynamic public IP address for the gateway subnet
+$gatewayPublicIp = New-AzPublicIpAddress -Name $gatewayPublicIpName `
+    -ResourceGroupName $resourceGroupName `
+    -Location $location `
+    -AllocationMethod Dynamic
+$gatewayIpConfig = New-AzVirtualNetworkGatewayIpConfig -Name $gatewayIpConfigName `
+    -Subnet $gatewaySubnet `
+    -PublicIpAddress $gatewayPublicIp
+
+# Get the certificate info
+# Get the full path in case a relative path was passed
+$rootCertFile = Get-ChildItem $rootCert
+$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($rootCertFile)
+$certBase64 = [System.Convert]::ToBase64String($cert.RawData)
+$p2sRootCert = New-AzVpnClientRootCertificate -Name $vpnRootCertName `
+    -PublicCertData $certBase64
+
+# Create the VPN gateway
+New-AzVirtualNetworkGateway -Name $vpnName `
+    -ResourceGroupName $resourceGroupName `
+    -Location $location `
+    -IpConfigurations $gatewayIpConfig `
+    -GatewayType Vpn `
+    -VpnType RouteBased `
+    -EnableBgp $false `
+    -GatewaySku Standard `
+    -VpnClientAddressPool $vpnClientAddressPool `
+    -VpnClientRootCertificates $p2sRootCert
+
+# Create the storage account
+New-AzStorageAccount `
+    -ResourceGroupName $resourceGroupName `
+    -Name $storageName `
+    -Type Standard_GRS `
+    -Location $location
+
+# Get the storage account keys and create a context
+$defaultStorageKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName `
+    -Name $storageName)[0].Value
+$storageContext = New-AzStorageContext -StorageAccountName $storageName `
+    -StorageAccountKey $defaultStorageKey
+
+# Create the default storage container
+New-AzStorageContainer -Name $defaultContainerName `
+    -Context $storageContext
+
+# Create the HDInsight cluster
+New-AzHDInsightCluster `
+    -ResourceGroupName $resourceGroupName `
+    -ClusterName $clusterName `
+    -Location $location `
+    -ClusterSizeInNodes $hdiWorkerNodes `
+    -ClusterType $hdiType `
+    -OSType Linux `
+    -Version $hdiVersion `
+    -HttpCredential $adminCreds `
+    -SshCredential $sshCreds `
+    -DefaultStorageAccountName "$storageName.blob.core.windows.net" `
+    -DefaultStorageAccountKey $defaultStorageKey `
+    -DefaultStorageContainer $defaultContainerName `
+    -DisksPerWorkerNode 2 `
+    -VirtualNetworkId $network.Id `
+    -SubnetName $defaultSubnet.Id
