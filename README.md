@@ -40,8 +40,14 @@ Change directory:
 Install dependencies:
      > npm install
 
-Run the app:
+Make your own configure file from config_template.json:
+     > config.json
+
+Run the app (Windows):
      > SET DEBUG=dashboard:* & npm start
+
+Or, run the app (Mac OS/Linux):
+     > npm start
 ```
 
 ## Pipeline
