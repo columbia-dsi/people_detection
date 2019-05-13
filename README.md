@@ -51,14 +51,19 @@ Or, run the app (Mac OS/Linux):
 ```
 
 ## Deployment
-#### Model
+#### Model Play Ground:
 
 https://people-detection.azurewebsites.net/model
 
-#### Dashboard
+#### Dashboard:
 
 https://people-detection.azurewebsites.net
+
 
 ## Pipeline
 
 ![Final Project Architecture](/dashboard/public/test/Pipeline.jpg)
+
+## JIRA
+
+https://toydemoproject.atlassian.net/jira/software/projects/PD/boards/14
